@@ -1,5 +1,6 @@
 use std::num::Wrapping;
 
+#[repr(C)]
 #[derive(Copy, Clone)]
 pub struct LinearCongruentialGenerator {
     seed: u64,

@@ -1,0 +1,15 @@
+[package]
+name = "lcg-c"
+version = "0.1.0"
+edition = "2021"
+
+[lib]
+name = "lcg"
+crate-type = ["cdylib"]
+
+[dependencies.lcg]
+path = "../.."
+version = "*"
+
+[dependencies]
+libc = "0.2.0"

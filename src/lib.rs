@@ -42,7 +42,7 @@ impl LinearCongruentialGenerator {
     }
 
     pub fn next_uniform(&mut self) -> f32 {
-        let value = self.next_uniform_cast_and_divide();
+        let value = self.next_uniform_from_random_mantissa_bits();
 
         assert!(!value.is_nan());
         assert!(value.is_finite());
@@ -54,6 +54,17 @@ impl LinearCongruentialGenerator {
         value
     }
 
+    fn next_uniform_from_random_mantissa_bits(&mut self) -> f32 {
+        // Includes all of the bits of the exponent that must be 1:
+        let predefined_bits = 0x3F800000;
+        // Random bits we can chuck in the mantissa.
+        let mantissa_mask = 0x007FFFFF;
+        let bits = self.next_u32();
+
+        f32::from_bits(predefined_bits | (bits & mantissa_mask)) - 1.0
+    }
+
+    #[allow(dead_code)]
     fn next_uniform_cast_and_divide(&mut self) -> f32 {
         (self.next_u32() as f64 / u32::MAX as f64) as f32
     }

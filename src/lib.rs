@@ -40,6 +40,40 @@ impl LinearCongruentialGenerator {
     pub fn next_i32(&mut self) -> i32 {
         self.next_u32() as i32
     }
+
+    pub fn next_uniform(&mut self) -> f32 {
+        let value = self.next_uniform_cast_and_divide();
+
+        assert!(!value.is_nan());
+        assert!(value.is_finite());
+        assert!(value.is_sign_positive());
+        assert!(value.is_finite());
+        assert!(value >= 0.0);
+        assert!(value < 1.0);
+
+        value
+    }
+
+    fn next_uniform_cast_and_divide(&mut self) -> f32 {
+        (self.next_u32() as f64 / u32::MAX as f64) as f32
+    }
+
+    fn next_uniform_fill_bits(&mut self) -> f32 {
+        let bits = self.next_u32();
+
+        // sets all but the sign bit and highest exponent bit
+        // exponent will be a value <= bias
+        // thus, maximum 1.mmmmmmmmmmmmm * 2^0
+        let high_30bit_mask = 0xFFFFFFFC;
+        // creates a number from [0.0, 2.0)
+        let rough_value = f32::from_bits((bits & high_30bit_mask) >> 2);
+
+        if rough_value >= 1.0 {
+            rough_value - 1.0
+        } else {
+            rough_value
+        }
+    }
 }
 
 #[cfg(test)]
@@ -99,6 +133,39 @@ mod tests {
 
         assert!(negatives_generated > 0);
         assert!(nonnegatives_generated > 0);
+    }
+
+    #[test]
+    fn it_is_decently_random() {
+        // Uses the Monty Carlo estimation of π to determine if we're "random enough"
+        // A true uniform random distribution of numbers will eventually eventually cover enough
+        // random points that will eventuall converge to π
+
+        // It's okay if we're off by this much:
+        let tolerance = 0.025; // 2.5% relative error. Better than most psych papers 😏
+        let rounds: usize = 10_000;
+
+        let initial_value = seed_from_current_time();
+        let mut rng = LinearCongruentialGenerator::new(initial_value);
+
+        let mut samples_within_circle = 0;
+        for _ in 0..rounds {
+            let x = rng.next_uniform();
+            let y = rng.next_uniform();
+
+            let inside_circle = (x * x + y * y) <= 1.0;
+            if inside_circle {
+                samples_within_circle += 1;
+            }
+        }
+
+        let std_pi = std::f32::consts::PI;
+        let pi_estimate = 4.0 * samples_within_circle as f32 / rounds as f32;
+
+        let absolute_error = (pi_estimate - std_pi).abs();
+        let relative_error = absolute_error / std_pi;
+
+        assert!(relative_error < tolerance);
     }
 
     fn seed_from_current_time() -> u64 {

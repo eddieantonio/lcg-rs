@@ -1,0 +1,16 @@
+[package]
+name = "lcg-python"
+version = "0.1.0"
+edition = "2018"
+
+[lib]
+name = "lcg"
+crate-type = ["cdylib"]
+
+[dependencies.lcg]
+path = "../.."
+version = "*"
+
+[dependencies.pyo3]
+version = "0.15.0"
+features = ["extension-module"]

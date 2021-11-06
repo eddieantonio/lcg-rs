@@ -32,10 +32,7 @@ impl LinearCongruentialGenerator {
     }
 
     pub fn next_u32(&mut self) -> u32 {
-        let high_32bit_mask = ((!0u32) as u64) << 16;
-        let raw_output = self.raw_next();
-
-        ((raw_output & high_32bit_mask) >> 16) as u32
+        (self.raw_next() >> 16) as u32
     }
 
     pub fn next_i32(&mut self) -> i32 {

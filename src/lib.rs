@@ -57,23 +57,6 @@ impl LinearCongruentialGenerator {
     fn next_uniform_cast_and_divide(&mut self) -> f32 {
         (self.next_u32() as f64 / u32::MAX as f64) as f32
     }
-
-    fn next_uniform_fill_bits(&mut self) -> f32 {
-        let bits = self.next_u32();
-
-        // sets all but the sign bit and highest exponent bit
-        // exponent will be a value <= bias
-        // thus, maximum 1.mmmmmmmmmmmmm * 2^0
-        let high_30bit_mask = 0xFFFFFFFC;
-        // creates a number from [0.0, 2.0)
-        let rough_value = f32::from_bits((bits & high_30bit_mask) >> 2);
-
-        if rough_value >= 1.0 {
-            rough_value - 1.0
-        } else {
-            rough_value
-        }
-    }
 }
 
 #[cfg(test)]

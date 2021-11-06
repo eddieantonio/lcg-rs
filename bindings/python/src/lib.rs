@@ -23,6 +23,12 @@ impl LCG {
     fn next_unsigned(&mut self) -> u32 {
         self.0.next_u32()
     }
+
+    /// Returns a random float in the range of [0, 1.0)
+    /// Internally, the random number uses single precision.
+    fn next_uniform(&mut self) -> f32 {
+        self.0.next_uniform()
+    }
 }
 
 #[pymodule]

@@ -63,11 +63,6 @@ impl LinearCongruentialGenerator {
 
         f32::from_bits(predefined_bits | (bits & mantissa_mask)) - 1.0
     }
-
-    #[allow(dead_code)]
-    fn next_uniform_cast_and_divide(&mut self) -> f32 {
-        (self.next_u32() as f64 / u32::MAX as f64) as f32
-    }
 }
 
 #[cfg(test)]

@@ -42,12 +42,12 @@ impl LinearCongruentialGenerator {
     pub fn next_uniform(&mut self) -> f32 {
         let value = self.next_uniform_from_random_mantissa_bits();
 
-        assert!(!value.is_nan());
-        assert!(value.is_finite());
-        assert!(value.is_sign_positive());
-        assert!(value.is_finite());
-        assert!(value >= 0.0);
-        assert!(value < 1.0);
+        debug_assert!(!value.is_nan());
+        debug_assert!(value.is_finite());
+        debug_assert!(value.is_sign_positive());
+        debug_assert!(value.is_finite());
+        debug_assert!(value >= 0.0);
+        debug_assert!(value < 1.0);
 
         value
     }

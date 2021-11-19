@@ -1,4 +1,4 @@
-target/
 .venv/
 
+# ignore my internal test files >.<
 /*.py

@@ -8,4 +8,5 @@ edition = "2021"
 members = [
     "bindings/c",
     "bindings/python",
+    "gigarand",
 ]
